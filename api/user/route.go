@@ -3,6 +3,7 @@ package user
 import (
 	"net/http"
 
+	"github.com/Brian-Hsieh/ecomm/pkg"
 	"github.com/gorilla/mux"
 )
 
@@ -17,5 +18,13 @@ func (h *Handler) RegisterRoutes(r *mux.Router) {
 	r.HandleFunc("/login", h.handleLogin)
 }
 
-func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {}
-func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request)    {}
+func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
+	// parse json payload
+	var payload *pkg.User
+	if err := pkg.ParseJSON(r, payload); err != nil {
+		pkg.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	// create user
+}
+func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {}
