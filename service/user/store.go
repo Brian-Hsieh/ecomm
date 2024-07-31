@@ -26,3 +26,7 @@ func (s *Store) GetUserByEmail(email string) (*pkg.User, error) {
 
 	return u, nil
 }
+
+func (s *Store) CreateUser(user pkg.User) error {
+	return nil
+}

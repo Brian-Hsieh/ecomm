@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Brian-Hsieh/ecomm/pkg"
@@ -22,11 +23,30 @@ func (h *Handler) RegisterRoutes(r *mux.Router) {
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	// parse json payload
-	var payload *pkg.UserPayload
+	var payload pkg.UserPayload
 	if err := pkg.ParseJSON(r, payload); err != nil {
 		pkg.WriteError(w, http.StatusBadRequest, err)
 	}
 
 	// check if user exists
+	_, err := h.store.GetUserByEmail(payload.Email)
+	if err == nil {
+		pkg.WriteError(w, http.StatusBadRequest, fmt.Errorf("user with email %s already exists", payload.Email))
+		return
+	}
+
+	// TODO: hash password
+
+	err = h.store.CreateUser(pkg.User{
+		Name:     payload.Name,
+		Email:    payload.Email,
+		Password: payload.Password,
+	})
+	if err != nil {
+		pkg.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	pkg.WriteJSON(w, http.StatusCreated, nil)
 }
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {}
