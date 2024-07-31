@@ -2,6 +2,11 @@ package pkg
 
 import "time"
 
+type UserStore interface {
+	GetUserByEmail(email string) (*User, error)
+	CreateUser(user User) error
+}
+
 type UserPayload struct {
 	Name     string `json:"username"`
 	Password string `json:"password"`

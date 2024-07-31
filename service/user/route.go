@@ -8,11 +8,11 @@ import (
 )
 
 type Handler struct {
-	store Store
+	store pkg.UserStore
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(store pkg.UserStore) *Handler {
+	return &Handler{store: store}
 }
 
 func (h *Handler) RegisterRoutes(r *mux.Router) {
