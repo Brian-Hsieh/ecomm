@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Brian-Hsieh/ecomm/api/user"
+	"github.com/Brian-Hsieh/ecomm/service/user"
 	"github.com/gorilla/mux"
 )
 
