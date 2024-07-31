@@ -20,11 +20,11 @@ func (h *Handler) RegisterRoutes(r *mux.Router) {
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	// parse json payload
-	var payload *pkg.User
+	var payload *pkg.UserPayload
 	if err := pkg.ParseJSON(r, payload); err != nil {
 		pkg.WriteError(w, http.StatusBadRequest, err)
 	}
 
-	// create user
+	// check if user exists
 }
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {}
