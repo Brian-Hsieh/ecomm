@@ -7,7 +7,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Handler struct{}
+type Handler struct {
+	store Store
+}
 
 func NewHandler() *Handler {
 	return &Handler{}
