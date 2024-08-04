@@ -6,6 +6,7 @@ import (
 
 	"github.com/Brian-Hsieh/ecomm/pkg"
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Handler struct {
@@ -35,12 +36,16 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: hash password
+	// hash user password
+	pwd, err := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
+	if err != nil {
+		pkg.WriteError(w, http.StatusInternalServerError, err)
+	}
 
 	err = h.store.CreateUser(pkg.User{
 		Name:     payload.Name,
 		Email:    payload.Email,
-		Password: payload.Password,
+		Password: string(pwd),
 	})
 	if err != nil {
 		pkg.WriteError(w, http.StatusInternalServerError, err)
