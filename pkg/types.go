@@ -5,6 +5,7 @@ import "time"
 type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
 	CreateUser(user User) error
+	GetUserByName(name string) (*User, error)
 }
 
 type UserPayload struct {

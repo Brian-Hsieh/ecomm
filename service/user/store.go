@@ -30,3 +30,15 @@ func (s *Store) GetUserByEmail(email string) (*pkg.User, error) {
 func (s *Store) CreateUser(user pkg.User) error {
 	return nil
 }
+
+func (s *Store) GetUserByName(name string) (*pkg.User, error) {
+	user := s.db.QueryRow("SELECT * FROM ecomm WHERE name = ?", name)
+
+	u := new(pkg.User)
+	if err := user.Scan(&u.ID, &u.Name, &u.Password, &u.Email, &u.DOB, &u.CreatedAt); err != nil {
+		fmt.Println("User not found")
+		return nil, err
+	}
+
+	return u, nil
+}
