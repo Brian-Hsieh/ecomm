@@ -1,6 +1,7 @@
 package user
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 
@@ -53,4 +54,33 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 
 	pkg.WriteJSON(w, http.StatusCreated, nil)
 }
-func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {}
+
+func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
+	// parse payload
+	var payload pkg.UserPayload
+	if err := pkg.ParseJSON(r, payload); err != nil {
+		pkg.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	user, err := h.store.GetUserByName(payload.Name)
+	if err != nil {
+		pkg.WriteError(w, http.StatusBadRequest, fmt.Errorf("user with name %s doesn't exists", payload.Name))
+	}
+
+	// hash user password for auth purpose
+	pwd, err := hashPassword(payload.Password)
+	if err != nil {
+		pkg.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	if !bytes.Equal(pwd, []byte(user.Password)) {
+		pkg.WriteError(w, http.StatusUnauthorized, fmt.Errorf("wrong password"))
+	}
+
+	tokenString, err := createToken(payload.Name)
+	if err != nil {
+		pkg.WriteError(w, http.StatusInternalServerError, fmt.Errorf("server error"))
+	}
+
+	pkg.WriteJSON(w, http.StatusOK, map[string]string{"token": tokenString})
+}
